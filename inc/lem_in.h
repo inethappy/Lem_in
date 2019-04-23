@@ -18,14 +18,15 @@ struct	s_r
 	char *name;
 	int x;
 	int y;
+	t_r *link;
 	t_l *links;
 };
 
-struct	s_l
-{
-	t_r *first;
-	t_r *next;
-};
+// struct	s_l
+// {
+// 	t_r *first;
+// 	t_r *next;
+// };
 
 struct	s_lem
 {
