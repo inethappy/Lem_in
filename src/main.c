@@ -20,6 +20,27 @@ void del_arr(char **arr)
 	free(arr);
 }
 
+t_list	*ft_lstnew_new(t_r *content, size_t content_size)
+{
+	t_list *new;
+	new = NULL;
+
+	if (!(new = (t_list*)malloc(sizeof(t_list))))
+		return (NULL);
+	if (content == NULL)
+	{
+		new->content = NULL;
+		new->content_size = 0;
+	}
+	else
+	{
+		new->content = content;
+		new->content_size = content_size;
+	}
+	new->next = NULL;
+	return (new);
+}
+
 void save_rooms(char *l, t_lem *lem)
 {
 	char **rm;
@@ -31,10 +52,9 @@ void save_rooms(char *l, t_lem *lem)
 	roo->x = ft_atoi(rm[1]);
 	roo->y = ft_atoi(rm[2]);
 	if (!lem->all_rms)
-		lem->all_rms = ft_lstnew(roo, sizeof(t_r));
+		lem->all_rms = ft_lstnew_new(roo, sizeof(t_r));
 	else
-		ft_lstadd_end(lem->all_rms, ft_lstnew(roo, sizeof(t_r)));
-	free(roo);
+		ft_lstadd_end(lem->all_rms, ft_lstnew_new(roo, sizeof(t_r)));
 	del_arr(rm);
 }
 
@@ -66,51 +86,42 @@ void save_start_end(char *l, t_lem *lem)
 
 void save_links(char *l, t_lem *lem)
 {
-	t_r *ptr;
-	t_r *p;
 	char **rm;
-	t_list *ptr2;
-	t_list *pt;
+	t_r *r1;
+	t_r *r2;
+	t_r *ptr;
+	t_list *list;
 
 	rm = ft_strsplit(l, '-');
-	ptr2 = lem->all_rms;
-	pt = lem->all_rms;
-
-	// printf("all = %p\n", lem->all_rms);
-
-	while (pt)
+	list = lem->all_rms;
+	while (list)
 	{
-		ptr = pt->content;
+		ptr = list->content;
 		if (ft_strcmp(ptr->name, rm[0]) == 0)
-		{
-			// printf("ptr->name %s\n", ptr->name);
-			while (lem->all_rms)
-			{
-				p = lem->all_rms->content;
-				// printf("p->name %s\n", p->name);
-				if (ft_strcmp(p->name, rm[1]) == 0)
-				{
-					// printf("%s, \n", p->name);
-					ptr->link = p;
-					printf("ptr->name %s, ptr->link->name = %s\n", ptr->name, ptr->link->name);
-
-				}
-				lem->all_rms = lem->all_rms->next;
-			}
-		}
-		lem->all_rms = lem->all_rms;
-		pt = pt->next;
+			r1 = ptr;
+		if (ft_strcmp(ptr->name, rm[1]) == 0)
+			r2 = ptr;
+		list = list->next;
 	}
-	lem->all_rms = ptr2;
+	if (!r1->links)
+		r1->links = ft_lstnew_new(r2, sizeof(t_r));
+	else
+		ft_lstadd_end(r1->links, ft_lstnew_new(r2, sizeof(t_r)));
+	if (!r2->links)
+		r2->links = ft_lstnew_new(r1, sizeof(t_r));
+	else
+		ft_lstadd_end(r2->links, ft_lstnew_new(r1, sizeof(t_r)));
+	del_arr(rm);
 }
 
 void save_inp(t_lem *lem, int fd)
 {
 	char *l;
-	t_r *ptr;
+	// t_r *ptr;
 	// int fl;
 
-	while (get_next_line(fd, &l))// && (fl = check_total(l, lem)))
+	// int i = 0;
+	while (get_next_line(fd, &l))// && i < 9)// && (fl = check_total(l, lem)))
 	{
 		if (ft_atoi(l) && !ft_strchr(l, ' ') && !ft_strchr(l, '\t') && !ft_strchr(l, '-'))
 			lem->total = ft_atoi(l);
@@ -126,14 +137,21 @@ void save_inp(t_lem *lem, int fd)
 		else if (ft_strchr(l, ' ')) //some validation please?
 			save_rooms(l, lem);
 		free(l);
+		// i++;
 	}
 	free(l);
-	while (lem->all_rms)
-	{
-		ptr = lem->all_rms->content;
-		printf("lem->all_rms->name = %s, x = %d, total = %d, link to %s\n", ptr->name, ptr->x, lem->total, ptr->link->name);
-		lem->all_rms = lem->all_rms->next;
-	}
+	// while (lem->all_rms)
+	// {
+	// 	ptr = lem->all_rms->content;
+	// 	t_r *ptr2;
+	// 	while (ptr->links)
+	// 	{
+	// 		ptr2 = ptr->links->content;
+	// 		printf("lem->all_rms->name = %s, x = %d, total = %d, link to %s\n", ptr->name, ptr->x, lem->total, ptr2->name);
+	// 		ptr->links = ptr->links->next;
+	// 	}
+	// 	lem->all_rms = lem->all_rms->next;
+	// }
 }
 
 int main(int argc, char **argv)

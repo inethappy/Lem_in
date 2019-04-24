@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../inc/ft_printf.h
+stdio.h
+-
+stdarg.h
+-
+
+../inc/lem_in.h
+libft.h
+../inc/libft.h
+ft_printf.h
+../inc/ft_printf.h
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+
+../inc/libft.h
+unistd.h
+-
+stdlib.h
+-
+string.h
+-
+fcntl.h
+-
+
+/Users/mkotytsk/Desktop/Lem_in/src/main.c
+lem_in.h
+/Users/mkotytsk/Desktop/Lem_in/src/lem_in.h
+

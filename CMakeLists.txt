@@ -1,0 +1,91 @@
+cmake_minimum_required(VERSION 3.13)
+project(Lem_in C)
+
+set(CMAKE_C_STANDARD 11)
+
+include_directories(inc)
+include_directories(lib)
+include_directories(lib/ft_printf)
+include_directories(lib/libft)
+include_directories(src)
+
+add_executable(Lem_in
+        inc/ft_printf.h
+        inc/lem_in.h
+        inc/libft.h
+
+        lib/libft/ft_atoi.c
+        lib/libft/ft_bzero.c
+        lib/libft/ft_isalnum.c
+        lib/libft/ft_isalpha.c
+        lib/libft/ft_isascii.c
+        lib/libft/ft_isdigit.c
+        lib/libft/ft_isprint.c
+        lib/libft/ft_itoa.c
+        lib/libft/ft_len_numb.c
+        lib/libft/ft_lstadd.c
+        lib/libft/ft_lstdel.c
+        lib/libft/ft_lstdelone.c
+        lib/libft/ft_lstiter.c
+        lib/libft/ft_lstmap.c
+        lib/libft/ft_lstnew.c
+        lib/libft/ft_memalloc.c
+        lib/libft/ft_memccpy.c
+        lib/libft/ft_memchr.c
+        lib/libft/ft_memcmp.c
+        lib/libft/ft_memcpy.c
+        lib/libft/ft_memdel.c
+        lib/libft/ft_memmove.c
+        lib/libft/ft_memset.c
+        lib/libft/ft_one_word.c
+        lib/libft/ft_putchar.c
+        lib/libft/ft_putchar_fd.c
+        lib/libft/ft_putendl.c
+        lib/libft/ft_putendl_fd.c
+        lib/libft/ft_putnbr.c
+        lib/libft/ft_putnbr_fd.c
+        lib/libft/ft_putstr.c
+        lib/libft/ft_putstr_fd.c
+        lib/libft/ft_str_len_n.c
+        lib/libft/ft_strcat.c
+        lib/libft/ft_strchr.c
+        lib/libft/ft_strclr.c
+        lib/libft/ft_strcmp.c
+        lib/libft/ft_strcpy.c
+        lib/libft/ft_strdel.c
+        lib/libft/ft_strdup.c
+        lib/libft/ft_strequ.c
+        lib/libft/ft_striter.c
+        lib/libft/ft_striteri.c
+        lib/libft/ft_strjoin.c
+        lib/libft/ft_strlcat.c
+        lib/libft/ft_strlen.c
+        lib/libft/ft_strmap.c
+        lib/libft/ft_strmapi.c
+        lib/libft/ft_strncat.c
+        lib/libft/ft_strncmp.c
+        lib/libft/ft_strncpy.c
+        lib/libft/ft_strnequ.c
+        lib/libft/ft_strnew.c
+        lib/libft/ft_strnstr.c
+        lib/libft/ft_strrchr.c
+        lib/libft/ft_strsplit.c
+        lib/libft/ft_strstr.c
+        lib/libft/ft_strsub.c
+        lib/libft/ft_strtrim.c
+        lib/libft/ft_tolower.c
+        lib/libft/ft_toupper.c
+        lib/libft/ft_words_counter.c
+        lib/libft/get_next_line.c
+        lib/ft_printf/flags.c
+        lib/ft_printf/ft_printf.c
+        lib/ft_printf/ft_printf.h
+        lib/ft_printf/handling.c
+        lib/ft_printf/help_functions.c
+        lib/ft_printf/numbers_func.c
+        lib/ft_printf/print_csp.c
+        lib/ft_printf/print_float.c
+        lib/ft_printf/print_numbers.c
+        lib/ft_printf/printing.c
+        lib/libft/libft.h
+        src/main.c)

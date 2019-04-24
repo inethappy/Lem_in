@@ -18,8 +18,7 @@ struct	s_r
 	char *name;
 	int x;
 	int y;
-	t_r *link;
-	t_l *links;
+	t_list *links;
 };
 
 // struct	s_l
