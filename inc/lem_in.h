@@ -7,7 +7,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-# define ABS(Value) (((Value) < 0) ? -(Value) : (Value))
+// # define ABS(Value) (((Value) < 0) ? -(Value) : (Value))
 
 typedef struct	s_l		t_l;
 typedef struct	s_r		t_r;

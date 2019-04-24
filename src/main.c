@@ -10,6 +10,12 @@ void	ft_lstadd_end(t_list *alst, t_list *new)
 	list_ptr->next = new;
 }
 
+int	p_error(char *s)
+{
+	ft_printf("%s\n", s);
+	exit(0);
+}
+
 void del_arr(char **arr)
 {
 	int i;
@@ -41,6 +47,38 @@ t_list	*ft_lstnew_new(t_r *content, size_t content_size)
 	return (new);
 }
 
+void save_end_room(char *l, t_lem *lem)
+{
+	char **rm;
+
+	rm = ft_strsplit(l, ' ');
+	lem->end = ft_memalloc(sizeof(t_r));
+	lem->end->name = ft_strdup(rm[0]);
+	lem->end->x = ft_atoi(rm[1]);
+	lem->end->y = ft_atoi(rm[2]);
+	if (!lem->all_rms)
+		lem->all_rms = ft_lstnew_new(lem->end, sizeof(t_r));
+	else
+		ft_lstadd_end(lem->all_rms, ft_lstnew_new(lem->end, sizeof(t_r)));
+	del_arr(rm);
+}
+
+void save_start_room(char *l, t_lem *lem)
+{
+	char **rm;
+
+	rm = ft_strsplit(l, ' ');
+	lem->start = ft_memalloc(sizeof(t_r));
+	lem->start->name = ft_strdup(rm[0]);
+	lem->start->x = ft_atoi(rm[1]);
+	lem->start->y = ft_atoi(rm[2]);
+	if (!lem->all_rms)
+		lem->all_rms = ft_lstnew_new(lem->start, sizeof(t_r));
+	else
+		ft_lstadd(&lem->all_rms, ft_lstnew_new(lem->start, sizeof(t_r))); // in begin
+	del_arr(rm);
+}
+
 void save_rooms(char *l, t_lem *lem)
 {
 	char **rm;
@@ -56,20 +94,6 @@ void save_rooms(char *l, t_lem *lem)
 	else
 		ft_lstadd_end(lem->all_rms, ft_lstnew_new(roo, sizeof(t_r)));
 	del_arr(rm);
-}
-
-void save_start_end(char *l, t_lem *lem)
-{
-	if (ft_strstr(l, "start"))
-	{
-		lem->start = ft_strnew(ft_str_len_n(l, ' '));
-		ft_strncpy(lem->start, l, ft_str_len_n(l, ' '));
-	}
-	else if (ft_strstr(l, "end"))
-	{
-		lem->end = ft_strnew(ft_str_len_n(l, ' '));
-		ft_strncpy(lem->end, l, ft_str_len_n(l, ' '));
-	}
 }
 
 // int check_total(char *l, t_lem *lem)
@@ -93,6 +117,8 @@ void save_links(char *l, t_lem *lem)
 	t_list *list;
 
 	rm = ft_strsplit(l, '-');
+	r1 = NULL;
+	r2 = NULL;
 	list = lem->all_rms;
 	while (list)
 	{
@@ -103,6 +129,8 @@ void save_links(char *l, t_lem *lem)
 			r2 = ptr;
 		list = list->next;
 	}
+	if (r1 == NULL || r2 == NULL)
+		p_error("Wrong room name in links!");
 	if (!r1->links)
 		r1->links = ft_lstnew_new(r2, sizeof(t_r));
 	else
@@ -117,8 +145,8 @@ void save_links(char *l, t_lem *lem)
 void save_inp(t_lem *lem, int fd)
 {
 	char *l;
-	// t_r *ptr;
-	// int fl;
+	t_r *ptr;
+	int fl;
 
 	// int i = 0;
 	while (get_next_line(fd, &l))// && i < 9)// && (fl = check_total(l, lem)))
@@ -127,12 +155,15 @@ void save_inp(t_lem *lem, int fd)
 			lem->total = ft_atoi(l);
 		else if (ft_strchr(l, '-') && !ft_strchr((ft_strchr(l, '-') + 1), '-'))
 			save_links(l, lem);
-		else if (l[0] == '#' && l[1] == '#' && ft_strstr(l, ))
+		else if (l[0] == '#' && l[1] == '#')
 		{
+			if (ft_strstr(l, "start") || ft_strstr(l, "end"))
+				fl = ft_strstr(l, "start") ? 0 : 1;
+			else
+				p_error("Wrong name of start/end!");
 			free(l);
 			get_next_line(fd, &l);
-			save_start_end(l, lem);
-			save_rooms(l, lem);
+			fl == 0 ? save_start_room(l, lem) : save_end_room(l, lem);
 		}
 		else if (ft_strchr(l, ' ')) //some validation please?
 			save_rooms(l, lem);
@@ -140,18 +171,19 @@ void save_inp(t_lem *lem, int fd)
 		// i++;
 	}
 	free(l);
-	// while (lem->all_rms)
-	// {
-	// 	ptr = lem->all_rms->content;
-	// 	t_r *ptr2;
-	// 	while (ptr->links)
-	// 	{
-	// 		ptr2 = ptr->links->content;
-	// 		printf("lem->all_rms->name = %s, x = %d, total = %d, link to %s\n", ptr->name, ptr->x, lem->total, ptr2->name);
-	// 		ptr->links = ptr->links->next;
-	// 	}
-	// 	lem->all_rms = lem->all_rms->next;
-	// }
+
+	while (lem->all_rms)
+	{
+		ptr = lem->all_rms->content;
+		t_r *ptr2;
+		while (ptr->links)
+		{
+			ptr2 = ptr->links->content;
+			printf("start = %s, end = %s, lem->all_rms->name = %s, x = %d, total = %d, link to %s\n", lem->start->name, lem->end->name, ptr->name, ptr->x, lem->total, ptr2->name);
+			ptr->links = ptr->links->next;
+		}
+		lem->all_rms = lem->all_rms->next;
+	}
 }
 
 int main(int argc, char **argv)
