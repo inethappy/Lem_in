@@ -31,8 +31,8 @@ struct	s_lem
 {
 	int total;
 	t_list *all_rms;
-	char *start;
-	char *end;
+	t_r *start;
+	t_r *end;
 };
 
 #endif

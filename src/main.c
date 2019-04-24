@@ -127,7 +127,7 @@ void save_inp(t_lem *lem, int fd)
 			lem->total = ft_atoi(l);
 		else if (ft_strchr(l, '-') && !ft_strchr((ft_strchr(l, '-') + 1), '-'))
 			save_links(l, lem);
-		else if (l[0] == '#' && l[1] == '#')
+		else if (l[0] == '#' && l[1] == '#' && ft_strstr(l, ))
 		{
 			free(l);
 			get_next_line(fd, &l);
