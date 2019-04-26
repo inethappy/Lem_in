@@ -1,31 +1,5 @@
 #include "lem_in.h"
 
-void	ft_lstadd_end(t_list *alst, t_list *new)
-{
-	t_list *list_ptr;
-
-	list_ptr = alst;
-	while (list_ptr->next != NULL)
-		list_ptr = list_ptr->next;
-	list_ptr->next = new;
-}
-
-int	p_error(char *s)
-{
-	ft_printf("%s\n", s);
-	exit(0);
-}
-
-void del_arr(char **arr)
-{
-	int i;
-
-	i = -1;
-	while (arr[++i])
-		free(arr[i]);
-	free(arr);
-}
-
 t_list	*ft_lstnew_new(t_r *content, size_t content_size)
 {
 	t_list *new;
@@ -47,142 +21,147 @@ t_list	*ft_lstnew_new(t_r *content, size_t content_size)
 	return (new);
 }
 
-void save_end_room(char *l, t_lem *lem)
+int	validation_data(t_lem *lem, char **rm)
 {
-	char **rm;
+	t_list *ptr;
+	t_r *var;
+	int i;
+	int j;
 
-	rm = ft_strsplit(l, ' ');
-	lem->end = ft_memalloc(sizeof(t_r));
-	lem->end->name = ft_strdup(rm[0]);
-	lem->end->x = ft_atoi(rm[1]);
-	lem->end->y = ft_atoi(rm[2]);
-	if (!lem->all_rms)
-		lem->all_rms = ft_lstnew_new(lem->end, sizeof(t_r));
-	else
-		ft_lstadd_end(lem->all_rms, ft_lstnew_new(lem->end, sizeof(t_r)));
-	del_arr(rm);
-}
-
-void save_start_room(char *l, t_lem *lem)
-{
-	char **rm;
-
-	rm = ft_strsplit(l, ' ');
-	lem->start = ft_memalloc(sizeof(t_r));
-	lem->start->name = ft_strdup(rm[0]);
-	lem->start->x = ft_atoi(rm[1]);
-	lem->start->y = ft_atoi(rm[2]);
-	if (!lem->all_rms)
-		lem->all_rms = ft_lstnew_new(lem->start, sizeof(t_r));
-	else
-		ft_lstadd(&lem->all_rms, ft_lstnew_new(lem->start, sizeof(t_r))); // in begin
-	del_arr(rm);
-}
-
-void save_rooms(char *l, t_lem *lem)
-{
-	char **rm;
-	t_r *roo;
-
-	rm = ft_strsplit(l, ' ');
-	roo = ft_memalloc(sizeof(t_r));
-	roo->name = ft_strdup(rm[0]);
-	roo->x = ft_atoi(rm[1]);
-	roo->y = ft_atoi(rm[2]);
-	if (!lem->all_rms)
-		lem->all_rms = ft_lstnew_new(roo, sizeof(t_r));
-	else
-		ft_lstadd_end(lem->all_rms, ft_lstnew_new(roo, sizeof(t_r)));
-	del_arr(rm);
-}
-
-// int check_total(char *l, t_lem *lem)
-// {
-// 	int flag;
-// 	int i;
-
-// 	while (l[i])
-// 	{
-// 		if (!ft_isdigit(l[i]) && !ft_isprint(l))
-// 	if (l[0] == '#' && l[1] == '#')
-// 	return (flag);
-// }
-
-void save_links(char *l, t_lem *lem)
-{
-	char **rm;
-	t_r *r1;
-	t_r *r2;
-	t_r *ptr;
-	t_list *list;
-
-	rm = ft_strsplit(l, '-');
-	r1 = NULL;
-	r2 = NULL;
-	list = lem->all_rms;
-	while (list)
+	ptr = lem->all_rms;
+	i = 0;
+	j = -1;
+	while (++i < 3)
 	{
-		ptr = list->content;
-		if (ft_strcmp(ptr->name, rm[0]) == 0)
-			r1 = ptr;
-		if (ft_strcmp(ptr->name, rm[1]) == 0)
-			r2 = ptr;
-		list = list->next;
+		while (rm[i][++j])
+			if (!ft_isdigit(rm[i][j]))
+				p_error("Not valid coordinate!");
+		j = -1;
 	}
-	if (r1 == NULL || r2 == NULL)
-		p_error("Wrong room name in links!");
-	if (!r1->links)
-		r1->links = ft_lstnew_new(r2, sizeof(t_r));
-	else
-		ft_lstadd_end(r1->links, ft_lstnew_new(r2, sizeof(t_r)));
-	if (!r2->links)
-		r2->links = ft_lstnew_new(r1, sizeof(t_r));
-	else
-		ft_lstadd_end(r2->links, ft_lstnew_new(r1, sizeof(t_r)));
-	del_arr(rm);
+	while (ptr)
+	{
+		var = ptr->content;
+		if (ft_strcmp(var->name, rm[0]) == 0)
+			p_error("The room names must not be repeated!");
+		if (var->x == ft_atoi(rm[1]) && var->y == ft_atoi(rm[2]))
+			p_error("Room coordinates must be unique!");
+		ptr = ptr->next;
+	}
+	return (1);
+}
+
+int check_digit(char *l)
+{
+	int i;
+
+	i = 0;
+	while (l[i])
+	{
+		if (!ft_isdigit(l[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
 void save_inp(t_lem *lem, int fd)
 {
 	char *l;
-	t_r *ptr;
+	// t_r *ptr;
 	int fl;
 
 	// int i = 0;
-	while (get_next_line(fd, &l))// && i < 9)// && (fl = check_total(l, lem)))
+	l = NULL;
+    get_next_line(fd, &l);
+    if (!check_digit(l) || ft_atoi(l) == 0)
+        p_error("Error! Not valid ants quantity!");
+    lem->total = ft_atoi(l);
+    free(l);
+	while (get_next_line(fd, &l))// && i < 9)
 	{
-		if (ft_atoi(l) && !ft_strchr(l, ' ') && !ft_strchr(l, '\t') && !ft_strchr(l, '-'))
-			lem->total = ft_atoi(l);
-		else if (ft_strchr(l, '-') && !ft_strchr((ft_strchr(l, '-') + 1), '-'))
-			save_links(l, lem);
-		else if (l[0] == '#' && l[1] == '#')
+		if (l[0] == '#' && l[1] == '#' && (ft_strcmp(l + 2, "start") == 0 || ft_strcmp(l + 2, "end") == 0))
 		{
-			if (ft_strstr(l, "start") || ft_strstr(l, "end"))
-				fl = ft_strstr(l, "start") ? 0 : 1;
-			else
-				p_error("Wrong name of start/end!");
+			fl = ft_strstr(l, "start") ? 0 : 1;
 			free(l);
 			get_next_line(fd, &l);
 			fl == 0 ? save_start_room(l, lem) : save_end_room(l, lem);
 		}
-		else if (ft_strchr(l, ' ')) //some validation please?
+		else if (ft_strchr(l, '-'))
+			save_links(l, lem);
+		else if (ft_strchr(l, ' '))
 			save_rooms(l, lem);
 		free(l);
 		// i++;
 	}
 	free(l);
 
-	while (lem->all_rms)
+	// while (lem->all_rms)
+	// {
+	// 	ptr = lem->all_rms->content;
+	// 	t_r *ptr2;
+	// 	while (ptr->links)
+	// 	{
+	// 		ptr2 = ptr->links->content;
+	// 		printf("start = %s, end = %s, lem->all_rms->name = %s, x = %d, y = %d, total = %d, link to %s\n", lem->start->name, lem->end->name, ptr->name, ptr->x, ptr->y, lem->total, ptr2->name);
+	// 		ptr->links = ptr->links->next;
+	// 	}
+	// 	lem->all_rms = lem->all_rms->next;
+	// }
+}
+
+int check_existing_node(t_r *node, t_list *queue)
+{
+	t_list *ptr;
+	t_r *ptr_tr;
+
+	ptr = queue;
+	while (ptr)
 	{
-		ptr = lem->all_rms->content;
-		t_r *ptr2;
-		while (ptr->links)
+		ptr_tr = ptr->content;
+        if (ft_strcmp(ptr_tr->name, node->name) == 0)
+			return (0);
+		ptr = ptr->next;
+	}
+	return (1);
+}
+
+void bfs(t_lem *lem)
+{
+	t_r *ptr;
+	t_list *list;
+	t_list *b_list;
+	int fl;
+
+	fl = 0;
+	ptr = NULL;
+	b_list = lem->all_rms;
+	while (b_list)
+	{
+		ptr = b_list->content;
+		if (fl == 0)
 		{
-			ptr2 = ptr->links->content;
-			printf("start = %s, end = %s, lem->all_rms->name = %s, x = %d, total = %d, link to %s\n", lem->start->name, lem->end->name, ptr->name, ptr->x, lem->total, ptr2->name);
-			ptr->links = ptr->links->next;
+			lem->queue = ft_lstnew(ptr, sizeof(t_r));
+			fl = 1;
 		}
-		lem->all_rms = lem->all_rms->next;
+		ptr->alrd = 1;
+		list = ptr->links;
+		while (list)
+		{
+			ptr = list->content;
+			if (check_existing_node(ptr, lem->queue))
+				ft_lstadd_end(lem->queue, ft_lstnew(ptr, sizeof(t_r)));
+			ptr->alrd = 1;
+			list = list->next;
+		}
+		b_list = b_list->next;
+	}
+	
+	list = lem->queue;
+	while (list)
+	{
+		ptr = list->content;
+		printf("tit %s\n", ptr->name);
+		list = list->next;
 	}
 }
 
@@ -195,6 +174,7 @@ int main(int argc, char **argv)
 	lem = ft_memalloc(sizeof(t_lem));
 	if (argc == 2)
 		save_inp(lem, fd);
+	bfs(lem);
 	system("leaks lem-in > leaks");
 	return (0);
 }

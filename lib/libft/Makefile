@@ -75,7 +75,10 @@ SOURCES	=	ft_isascii.c \
 			ft_strrchr.c \
 			ft_toupper.c \
 			ft_len_numb.c \
-			get_next_line.c
+			get_next_line.c \
+			ft_lstadd_end.c \
+			p_error.c \
+			del_arr.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 all:	$(NAME)

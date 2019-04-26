@@ -14,6 +14,7 @@ add_executable(Lem_in
         inc/lem_in.h
         inc/libft.h
 
+        lib/libft/del_arr.c
         lib/libft/ft_atoi.c
         lib/libft/ft_bzero.c
         lib/libft/ft_isalnum.c
@@ -24,6 +25,7 @@ add_executable(Lem_in
         lib/libft/ft_itoa.c
         lib/libft/ft_len_numb.c
         lib/libft/ft_lstadd.c
+        lib/libft/ft_lstadd_end.c
         lib/libft/ft_lstdel.c
         lib/libft/ft_lstdelone.c
         lib/libft/ft_lstiter.c
@@ -77,6 +79,7 @@ add_executable(Lem_in
         lib/libft/ft_toupper.c
         lib/libft/ft_words_counter.c
         lib/libft/get_next_line.c
+        lib/libft/libft.h
         lib/ft_printf/flags.c
         lib/ft_printf/ft_printf.c
         lib/ft_printf/ft_printf.h
@@ -87,5 +90,6 @@ add_executable(Lem_in
         lib/ft_printf/print_float.c
         lib/ft_printf/print_numbers.c
         lib/ft_printf/printing.c
-        lib/libft/libft.h
-        src/main.c)
+        lib/libft/p_error.c
+        src/main.c
+        src/save_input.c)

@@ -7,6 +7,7 @@ OBJECTS_DIR	:= ./obj/
 INCLUDE_DIR	:= ./inc/
 LIB_DIR		:= ./lib/
 SOURCES		:=	main.c \
+				save_input.c
 
 OBJECTS		:= $(addprefix $(OBJECTS_DIR), $(SOURCES:.c=.o))
 
