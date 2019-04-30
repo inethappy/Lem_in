@@ -1,13 +1,13 @@
-Process:         lem-in [86488]
+Process:         lem-in [11708]
 Path:            /Users/mkotytsk/Desktop/Lem_in/lem-in
-Load Address:    0x105179000
+Load Address:    0x101325000
 Identifier:      lem-in
 Version:         ???
 Code Type:       X86-64
-Parent Process:  zsh [81392]
+Parent Process:  zsh [5525]
 
-Date/Time:       2019-04-26 17:08:28.984 +0300
-Launch Time:     2019-04-26 17:08:28.705 +0300
+Date/Time:       2019-04-30 17:50:08.447 +0300
+Launch Time:     2019-04-30 17:50:07.266 +0300
 OS Version:      Mac OS X 10.13.3 (17D47)
 Report Version:  7
 Analysis Tool:   /Applications/Xcode.app/Contents/Developer/usr/bin/leaks
@@ -15,17 +15,17 @@ Analysis Tool Version:  Xcode 9.2 (9C40b)
 ----
 
 leaks Report Version:  2.0
-Process 86488: 192 nodes malloced for 20 KB
-Process 86488: 4 leaks for 128 total leaked bytes.
-Leak: 0x7fd8bd600020  size=32  zone: DefaultMallocZone_0x105180000
-	0xbd600460 0x00007fd8 0xbd600480 0x00007fd8 	`.`.......`.....
-	0xbd6004a0 0x00007fd8 0x00000000 0x00000000 	..`.............
-Leak: 0x7fd8bd600460  size=32  zone: DefaultMallocZone_0x105180000
+Process 11708: 192 nodes malloced for 20 KB
+Process 11708: 4 leaks for 128 total leaked bytes.
+Leak: 0x7fbe9e402790  size=32  zone: DefaultMallocZone_0x10132c000
+	0x9e402dc0 0x00007fbe 0x9e402de0 0x00007fbe 	.-@......-@.....
+	0x9e402e00 0x00007fbe 0x00000000 0x00000000 	..@.............
+Leak: 0x7fbe9e402dc0  size=32  zone: DefaultMallocZone_0x10132c000
 	0x00003323 0x00000000 0x00000000 0x00000000 	#3..............
 	0x00000000 0x00000000 0x00000000 0x00000000 	................
-Leak: 0x7fd8bd600480  size=32  zone: DefaultMallocZone_0x105180000
+Leak: 0x7fbe9e402de0  size=32  zone: DefaultMallocZone_0x10132c000
 	0x00003331 0x00000000 0x00000000 0x00000000 	13..............
 	0x00000000 0x00000000 0x00000000 0x00000000 	................
-Leak: 0x7fd8bd6004a0  size=32  zone: DefaultMallocZone_0x105180000
+Leak: 0x7fbe9e402e00  size=32  zone: DefaultMallocZone_0x10132c000
 	0x00000030 0x00000000 0x00000000 0x00000000 	0...............
 	0x00000000 0x00000000 0x00000000 0x00000000 	................

@@ -19,22 +19,17 @@ struct	s_r
 	int x;
 	int y;
 	int alrd;
+	int lvl;
+	t_r *parent;
 	t_list *links;
 };
-
-// struct	s_l
-// {
-// 	t_r *first;
-// 	t_r *next;
-// };
 
 struct	s_lem
 {
 	int total;
 	t_list *all_rms;
 	t_list *queue;
-	// t_list *alrd;
-	int count;
+	t_list *path;
 	t_r *start;
 	t_r *end;
 };
@@ -47,6 +42,9 @@ void save_inp(t_lem *lem, int fd);
 int	validation_data(t_lem *lem, char **rm);
 t_list	*ft_lstnew_new(t_r *content, size_t content_size);
 void     link_if_list(t_r *r1, t_r *r2, t_list *list, t_r *ptr);
+
+
+void bfs_recursieve(t_list *list, t_lem *lem, int step, t_r *pr);
 
 
 #endif
