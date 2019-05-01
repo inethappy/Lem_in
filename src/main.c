@@ -67,7 +67,6 @@ int check_digit(char *l)
 void save_inp(t_lem *lem, int fd)
 {
 	char *l;
-	// t_r *ptr;
 	int fl;
 
 	// int i = 0;
@@ -95,6 +94,7 @@ void save_inp(t_lem *lem, int fd)
 	}
 	free(l);
 
+	// t_r *ptr;
 	// while (lem->all_rms)
 	// {
 	// 	ptr = lem->all_rms->content;
@@ -125,68 +125,50 @@ int check_existing_node(t_r *node, t_list *queue)
 	return (1);
 }
 
-void bfs_recursieve(t_list *list, t_lem *lem, int step, t_r *pr)
+void bfs_recursieve(t_list *all, t_lem *lem, int step)
 {
 	t_r *node;
 	t_r *node2;
 	t_list *l;
-	t_list *lnk;
-	
-	lnk = list;
 
-	while (lnk)
+	while (all)
 	{
-		node = lnk->content;
-		node->lvl = step;
-		node->parent = pr;
-		if (check_existing_node(node, lem->queue))
-			ft_lstadd_end(lem->queue, ft_lstnew(node, sizeof(t_r)));
-		l = node->links;
-		while (l)
+		node = all->content;
+		if (node->lvl == (step - 1))
 		{
-			node2 = l->content;
-			pr = node;
-			if (check_existing_node(node2, lem->queue))
-				ft_lstadd_end(lem->queue, ft_lstnew(node2, sizeof(t_r)));
-			l = l->next;
+			l = node->links;
+			lem->count++;
+			while (l)
+			{
+				node2 = l->content;
+				node2->lvl = step;
+				node2->parent = node;
+				if (check_existing_node(node2, lem->queue)) ////????
+					ft_lstadd_end(lem->queue, ft_lstnew(node2, sizeof(t_r)));
+				l = l->next;
+			}
 		}
-		if (!ft_strcmp(node->name, lem->start->name))
-			return ;
-		printf("%s, %s\n", node->name, node->parent->name);
-		lnk = lnk->next;
+		all = all->next;
 	}
-	// lnk = list;
-	// while (lnk)
-	// {
-	// 	node = lnk->content;
-	// 	l = node->links;
-	// 	pr = node;
-	// 	bfs_recursieve(l, lem, ++step, pr);
-	// 	lnk = lnk->next;
-	// }
+	if (lem->count < 4)
+		bfs_recursieve(lem->all_rms, lem, ++step);
+}
 
+void bfs_go(t_lem *lem, int step)
+{
+	t_list *l;
+	t_r *node;
 
-
-		// // if (lem->flag == 1)
-		// // 	return ;
-		// node = lnk->content;
-		// node->lvl = step;
-		// l = node->links;
-		// node->parent = l->content;
-		// printf("%s, %s\n", node->name, node->parent->name);
-
-		// if (check_existing_node(node, lem->queue))
-		// 	ft_lstadd_end(lem->queue, ft_lstnew(node, sizeof(t_r)));
-		// if (ft_strcmp(node->name, lem->start->name))
-		// 	bfs_recursieve(l, lem, ++step);
-		// // else
-		// // {
-		// // 	lem->path = lem->queue;
-		// // 	lem->flag = 1;
-		// // 	return ;
-		// // }
-		// lnk = lnk->next;
-	// }
+	l = lem->end->links;
+	while (l)
+	{
+		node = l->content;
+		node->lvl = step;
+		node->parent = lem->end;
+		ft_lstadd_end(lem->queue, ft_lstnew(node, sizeof(t_r)));
+		l = l->next;
+	}
+	bfs_recursieve(lem->all_rms, lem, ++step);
 }
 
 void bfs(t_lem *lem)
@@ -194,9 +176,8 @@ void bfs(t_lem *lem)
 	t_r *ptr;
 	t_list *list;
 
-	lem->end->parent = NULL;//list->content;
 	lem->queue = ft_lstnew(lem->end, sizeof(t_r));
-	bfs_recursieve(lem->queue, lem, 0, lem->end);
+	bfs_go(lem, 1);
 
 	// otladka
 	list = lem->queue;

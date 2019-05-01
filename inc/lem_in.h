@@ -32,6 +32,7 @@ struct	s_lem
 	t_list *path;
 	t_r *start;
 	t_r *end;
+	int count;
 };
 
 void save_end_room(char *l, t_lem *lem);
@@ -44,7 +45,7 @@ t_list	*ft_lstnew_new(t_r *content, size_t content_size);
 void     link_if_list(t_r *r1, t_r *r2, t_list *list, t_r *ptr);
 
 
-void bfs_recursieve(t_list *list, t_lem *lem, int step, t_r *pr);
+// void bfs_recursieve(t_list *list, t_lem *lem, int step, t_r *pr);
 
 
 #endif

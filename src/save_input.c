@@ -19,7 +19,7 @@ void save_end_room(char *l, t_lem *lem)
 	if (!lem->all_rms)
 		lem->all_rms = ft_lstnew_new(lem->end, sizeof(t_r));
 	else
-		ft_lstadd_end(lem->all_rms, ft_lstnew_new(lem->end, sizeof(t_r)));
+		ft_lstadd(&lem->all_rms, ft_lstnew_new(lem->end, sizeof(t_r)));
 	del_arr(rm);
 }
 
@@ -42,7 +42,7 @@ void save_start_room(char *l, t_lem *lem)
 	if (!lem->all_rms)
 		lem->all_rms = ft_lstnew_new(lem->start, sizeof(t_r));
 	else
-		ft_lstadd(&lem->all_rms, ft_lstnew_new(lem->start, sizeof(t_r))); // in begin
+		ft_lstadd_end(lem->all_rms, ft_lstnew_new(lem->start, sizeof(t_r))); // in begin
 	del_arr(rm);
 }
 
