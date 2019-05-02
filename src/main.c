@@ -1,26 +1,5 @@
 #include "lem_in.h"
 
-t_list	*ft_lstnew_new(t_r *content, size_t content_size)
-{
-	t_list *new;
-	new = NULL;
-
-	if (!(new = (t_list*)malloc(sizeof(t_list))))
-		return (NULL);
-	if (content == NULL)
-	{
-		new->content = NULL;
-		new->content_size = 0;
-	}
-	else
-	{
-		new->content = content;
-		new->content_size = content_size;
-	}
-	new->next = NULL;
-	return (new);
-}
-
 int	validation_data(t_lem *lem, char **rm)
 {
 	t_list *ptr;
@@ -46,20 +25,6 @@ int	validation_data(t_lem *lem, char **rm)
 		if (var->x == ft_atoi(rm[1]) && var->y == ft_atoi(rm[2]))
 			p_error("Room coordinates must be unique!");
 		ptr = ptr->next;
-	}
-	return (1);
-}
-
-int check_digit(char *l)
-{
-	int i;
-
-	i = 0;
-	while (l[i])
-	{
-		if (!ft_isdigit(l[i]))
-			return (0);
-		i++;
 	}
 	return (1);
 }
@@ -137,65 +102,28 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 		if (node->lvl == (step - 1))
 		{
 			l = node->links;
-			lem->count++;
 			while (l)
 			{
+				lem->count++;
 				node2 = l->content;
 				node2->lvl = step;
-				node2->parent = node;
-				if (check_existing_node(node2, lem->queue)) ////????
+				if (check_existing_node(node2, lem->queue))
+				{
+					node2->parent = node;
 					ft_lstadd_end(lem->queue, ft_lstnew(node2, sizeof(t_r)));
+				}
 				l = l->next;
 			}
 		}
 		all = all->next;
 	}
-	if (lem->count < 4)
+	if (lem->count < lem->ttl_rms)
 		bfs_recursieve(lem->all_rms, lem, ++step);
 }
 
-void bfs_go(t_lem *lem, int step)
-{
-	t_list *l;
-	t_r *node;
-
-	l = lem->end->links;
-	while (l)
-	{
-		node = l->content;
-		node->lvl = step;
-		node->parent = lem->end;
-		ft_lstadd_end(lem->queue, ft_lstnew(node, sizeof(t_r)));
-		l = l->next;
-	}
-	bfs_recursieve(lem->all_rms, lem, ++step);
-}
-
-void bfs(t_lem *lem)
-{
-	t_r *ptr;
-	t_list *list;
-
-	lem->queue = ft_lstnew(lem->end, sizeof(t_r));
-	bfs_go(lem, 1);
-
-	// otladka
-	list = lem->queue;
-	while (list)
-	{
-		ptr = list->content;
-		printf("queue %s, lvl = %d, ", ptr->name, ptr->lvl);
-		if (ptr->parent)
-			 printf("prnt = %s", ptr->parent->name);
-		printf("\n");
-		list = list->next;
-	}
-}
-
-void try_path(t_lem *lem)
+t_list *search_path(t_lem *lem)
 {
 	t_list *list;
-	t_list *path;
 	t_r *res;
 	t_r *res2;
 
@@ -206,23 +134,94 @@ void try_path(t_lem *lem)
 		if (list->next)
 			list = list->next;
 		res2 = list->content;
-		if (res->lvl > res2->lvl)
+		if (res->lvl > res2->lvl && res2->lvl != -1)
 			res = res2;
+		if (res->lvl == -1 && res2->lvl == -1)
+			return (NULL);
 		list = list->next;
 	}
-	// printf("%s\n", res->name);
-	path = ft_lstnew_new(res, sizeof(t_r));
+	list = ft_lstnew_new(res, sizeof(t_r));
+	res->lvl = -1;
+	while (res)
+	{
 		res = res->parent;
-	// while (res)
+		ft_lstadd_end(list, ft_lstnew_new(res, sizeof(t_r)));
+		if (ft_strcmp(res->name, lem->end->name) == 0)
+			break ;
+	}
+	return (list);
+}
+
+void save_all_pathes(t_lem *lem)
+{
+	t_list *list;
+
+	list = search_path(lem);
+	if (list == NULL)
+		p_error("No any valid path!");
+	while (list)
+	{
+		if (!lem->path)
+			lem->path = ft_lstnew_new(list, sizeof(t_list));
+		else
+			ft_lstadd_end(lem->path, ft_lstnew_new(list, sizeof(t_list)));
+		list = search_path(lem);
+	}
+}
+
+void bfs(t_lem *lem)
+{
+	t_list *l;
+	t_r *node;
+	int step;
+	t_list *list;
+
+	step = 1;
+	lem->queue = ft_lstnew(lem->end, sizeof(t_r));
+	l = lem->end->links;
+	lem->ttl_rms++;
+	while (l)
+	{
+		node = l->content;
+		node->lvl = step;
+		node->parent = lem->end;
+		lem->ttl_rms++;
+		ft_lstadd_end(lem->queue, ft_lstnew(node, sizeof(t_r)));
+		l = l->next;
+	}
+	bfs_recursieve(lem->all_rms, lem, ++step);
+	save_all_pathes(lem);
+	
+	
+	//otladka
+	t_list *path;
+	int i = 0;
+	t_r *res;
+	path = lem->path;
+	while (path)
+	{
+		list = path->content;
+		while (list)
+		{
+			res = list->content;
+			printf("%d %s\n", i, res->name);
+			list = list->next;
+		}
+		path = path->next;
+		i++;
+	}
+	// otladka queue
+	// t_r *ptr;
+	// t_list *list;
+	// list = lem->all_rms;
+	// while (list)
 	// {
-	// 	ft_lstadd(&path, ft_lstnew_new(res, sizeof(t_r)));
-	// 	res = res->parent;
-	// }
-	// while (path)
-	// {
-	// 	res = path->content;
-	// 	printf("%s\n", res->name);
-	// 	path = path->next;
+	// 	ptr = list->content;
+	// 	printf("queue %s, lvl = %d, ", ptr->name, ptr->lvl);
+	// 	if (ptr->parent)
+	// 		 printf("prnt = %s", ptr->parent->name);
+	// 	printf("\n");
+	// 	list = list->next;
 	// }
 }
 
@@ -235,8 +234,8 @@ int main(int argc, char **argv)
 	lem = ft_memalloc(sizeof(t_lem));
 	if (argc == 2)
 		save_inp(lem, fd);
+	count_rooms(lem);
 	bfs(lem);
-	// try_path(lem);
 	system("leaks lem-in > leaks");
 	return (0);
 }

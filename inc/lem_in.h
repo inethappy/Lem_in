@@ -27,6 +27,7 @@ struct	s_r
 struct	s_lem
 {
 	int total;
+	int ttl_rms;
 	t_list *all_rms;
 	t_list *queue;
 	t_list *path;
@@ -41,8 +42,11 @@ void save_rooms(char *l, t_lem *lem);
 void save_links(char *l, t_lem *lem);
 void save_inp(t_lem *lem, int fd);
 int	validation_data(t_lem *lem, char **rm);
-t_list	*ft_lstnew_new(t_r *content, size_t content_size);
-void     link_if_list(t_r *r1, t_r *r2, t_list *list, t_r *ptr);
+t_list	*ft_lstnew_new(void *content, size_t content_size);
+void     link_if_list(t_r *r1, t_r *r2);
+void count_rooms(t_lem *lem);
+int check_digit(char *l);
+
 
 
 // void bfs_recursieve(t_list *list, t_lem *lem, int step, t_r *pr);
