@@ -46,10 +46,12 @@ t_list	*ft_lstnew_new(void *content, size_t content_size);
 void     link_if_list(t_r *r1, t_r *r2);
 void count_rooms(t_lem *lem);
 int check_digit(char *l);
+void bfs(t_lem *lem);
+void bfs_recursieve(t_list *all, t_lem *lem, int step);
+int check_existing_node(t_r *node, t_list *queue);
+void save_all_pathes(t_lem *lem);
+int search_path(t_lem *lem, t_list **ptr);
 
-
-
-// void bfs_recursieve(t_list *list, t_lem *lem, int step, t_r *pr);
 
 
 #endif

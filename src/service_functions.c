@@ -24,6 +24,7 @@ void count_rooms(t_lem *lem)
 		lem->ttl_rms++;
 		all = all->next;
 	}
+	printf("%d\n", lem->ttl_rms);
 }
 
 t_list	*ft_lstnew_new(void *content, size_t content_size)

@@ -36,6 +36,7 @@ void search_linked_rooms(char **rm, t_r **r1, t_r **r2, t_lem *lem)
 	}
 	if (*r1 == NULL || *r2 == NULL || rm[2])
 		p_error("Wrong room name in links!");
+	lem->ttl_rms += 1;
 }
 
 void save_links(char *l, t_lem *lem)
