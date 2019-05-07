@@ -85,6 +85,7 @@ int main(int argc, char **argv)
 		save_inp(lem, fd);
 	count_rooms(lem);
 	bfs(lem);
+	
 	system("leaks lem-in > leaks");
 	return (0);
 }

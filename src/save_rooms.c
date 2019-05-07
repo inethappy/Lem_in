@@ -53,7 +53,10 @@ void save_rooms(char *l, t_lem *lem)
 	
 	rm = ft_strsplit(l, ' ');
 	if (rm[0][0] == '#')
+	{
+		del_arr(rm);
 		return ;
+	}
 	roo = ft_memalloc(sizeof(t_r));
 	if (validation_data(lem, rm))
 	{

@@ -10,6 +10,7 @@ SOURCES		:=	main.c \
 				save_rooms.c \
 				save_links.c \
 				service_functions.c \
+				graph_construction.c \
 				search_pathes.c
 
 OBJECTS		:= $(addprefix $(OBJECTS_DIR), $(SOURCES:.c=.o))
