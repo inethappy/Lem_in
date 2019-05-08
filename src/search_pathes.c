@@ -51,17 +51,31 @@ int search_smallest_level(t_r **next_node, t_list **l, t_r **result, int *fl)
 	{
 		list = list->next;
 		next_node2 = list->content;
+		// t_list *list2;
+		// list2 = list;
+		// t_r *res;
+		// while (list2)
+		// {
+		// 	res = list2->content;
+		// 	printf("start link %s\n", res->name);
+		// 	list2 = list2->next;
+		// }
+		// printf("%s\n", next_node2->name);
+
 		next_node_levels(ptr2, next_node2, &ptr, fl);
 		ptr2 = next_node2;
+		ret = 0;
 	}
 	else //if (!list->next && (ret = 0))
 		ptr = (ptr) ? ptr : ptr2;
 	*result = ptr;
 	*next_node = ptr2;
-	list = list->next; //////////!!!
+	if (ret == 1)
+		list = list->next; //////////!!!
 	*l = list;
-	// printf("%d, %s\n", ret, ptr2->name);
-	return (ret == 0 ? 0 : 1);
+	// printf("next_node = %s %d, result = %s %d\n", ptr2->name, ptr2->lvl, ptr->name, ptr->lvl);
+
+	return (1);
 }
 
 t_r *search_smallest_path(t_lem *lem)
@@ -83,7 +97,7 @@ t_r *search_smallest_path(t_lem *lem)
 		{
 			if ((search_smallest_level(&next_node, &list, &result, &fl) == 0))
 				break ;
-			// printf("next_node = %s %d, next_node2 = %s %d, result = %s %d\n", next_node->name, next_node->lvl, next_node2->name, next_node2->lvl, result->name, result->lvl);
+			// printf("next_node = %s %d, result = %s %d\n", next_node->name, next_node->lvl, result->name, result->lvl);
 		}
 		fl = 0;
 		list = lem->start->links;
@@ -97,7 +111,7 @@ t_list *search_path(t_lem *lem, int *next_node)
 {
 	t_list *list;
 	t_r *result = NULL;
-    
+	
 	block_not_valid_pathes(lem);
 	result = search_smallest_path(lem);
 	if (!result || result->lvl == -1)
@@ -107,9 +121,12 @@ t_list *search_path(t_lem *lem, int *next_node)
 	}
 	result->lvl = -1;
 	list = ft_lstnew_new(result, sizeof(t_r));
+	// printf("do %s\n", result->name);
+
 	while (result != lem->end)
 	{
 		result = result->parent;
+	// printf("par %s\n", result->name);
 		if (result->lvl == -1)
 		{
 			*next_node = 0;
