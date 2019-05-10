@@ -74,6 +74,68 @@ void save_inp(t_lem *lem, int fd)
 	// }
 }
 
+void push_ants(t_lem *lem)
+{
+	t_list *list;
+	t_list *road;
+
+	list = lem->path;
+	while (list)
+	{
+		road = list->content;
+		while (road)
+		{
+
+		}
+		
+		
+	}
+}
+
+int refresh_parents(t_lem *lem)
+{
+	t_r *node;
+	t_list *list;
+	int i;
+
+	i = 0;
+	list = lem->start->links;
+	while (list)
+	{
+		node = list->content;
+		if (node->lvl > 0)
+			i++;
+		list = list->next;  
+	}
+	if (i == 0)
+		return (0);
+	list = lem->all_rms;
+	while (list)
+	{
+		node = list->content;
+		if (node->lvl > 0 && node != lem->end && node != lem->start)
+		{
+			++i;
+			// node->parent = 0;
+			node->alrd = 0;
+			node->lvl = 0;
+		}
+		list = list->next;
+	}
+	if (i == 0)
+		return (0);
+	return (1);
+}
+
+void bfsss(t_lem *lem)
+{
+	lem->count = 0;
+	bfs(lem);
+	save_all_pathes(lem);
+	if (refresh_parents(lem) > 0)
+		bfsss(lem);
+}
+
 int main(int argc, char **argv)
 {
 	t_lem *lem;
@@ -84,8 +146,33 @@ int main(int argc, char **argv)
 	if (argc == 2)
 		save_inp(lem, fd);
 	count_rooms(lem);
-	bfs(lem);
+	bfsss(lem);
 	
+	t_list *list;
+	t_list *path;
+	int i = 0;
+	int j = 0;
+	size_t ll = 0;
+	t_r *next_node;
+	path = lem->path;
+	while (path)
+	{
+		list = path->content;
+		printf("path %d\n", i);
+		while (list)
+		{
+			next_node = list->content;
+			ll = list->content_size;
+			printf("[%s] ", next_node->name);
+			j++;
+			list = list->next;
+		}
+		printf("all length = %zu\n", ll);
+		j = 0;
+		path = path->next;
+		i++;
+	}
+	// push_ants(lem);
 	system("leaks lem-in > leaks");
 	return (0);
 }

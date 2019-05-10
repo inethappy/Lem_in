@@ -28,16 +28,18 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 	while (all)
 	{
 		node = all->content;
-		if (node->lvl == (step - 1) && node != lem->start)
+		if (node->lvl == (step - 1) && node != lem->start && node->lvl != -1)
 		{
 			l = node->links;
 			while (l)
 			{
-				++lem->count;
 				node2 = l->content;
-				node2->lvl = (node2->lvl == 0) ? step : node2->lvl;
-				if (node2->alrd == 0 && (node2->parent = node) && ++lem->count)
+				// node2->lvl = (node2->lvl == 0) ? step : node2->lvl;
+				if (node2->alrd == 0 && node2->lvl != -1 && (node2->parent = node) && ++lem->count)
+				{
+					node2->lvl = step;
 					node2->alrd = 1;
+				}
 				l = l->next;
 			}
 		}
@@ -46,6 +48,19 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 	}
 	if (i < lem->count) // lem->count < lem->ttl_rms && 
 		bfs_recursieve(lem->all_rms, lem, ++step);
+}
+
+void block_path(t_list *path, t_lem *lem)
+{
+	t_r *node;
+
+	while (path)
+	{
+		node = path->content;
+		if (node != lem->end)
+			node->lvl = -1;
+		path = path->next;
+	}
 }
 
 void save_all_pathes(t_lem *lem)
@@ -63,10 +78,12 @@ void save_all_pathes(t_lem *lem)
 		list = search_path(lem, &next_node);
 		if (next_node > 0)
 		{
+			// block_path(list, lem);
 			if (!lem->path)
 				lem->path = ft_lstnew_new(list, sizeof(t_list));
 			else
 				ft_lstadd_end(lem->path, ft_lstnew_new(list, sizeof(t_list)));
+			break ;
 		}
 	}
 	if (lem->path == NULL)
@@ -81,18 +98,19 @@ void bfs(t_lem *lem)
 
 	step = 1;
 	l = lem->end->links;
-	lem->ttl_rms++;
 	while (l)
 	{
 		node = l->content;
-		node->lvl = step;
-		node->parent = lem->end;
-		node->alrd = 1;
-		lem->ttl_rms++;
+		if (node->lvl > -1)
+		{
+			node->lvl = step;
+			node->parent = lem->end;
+			node->alrd = 1;
+		}
 		l = l->next;
 	}
 	bfs_recursieve(lem->all_rms, lem, ++step);
-    save_all_pathes(lem);
+    // save_all_pathes(lem);
 	
 	// otladka starts
 	// t_list *list;
@@ -106,25 +124,30 @@ void bfs(t_lem *lem)
 	// }
 
 	// otladka path
-	t_list *path;
-	t_list *list;
-	int i = 0;
-	int j = 0;
-	t_r *next_node;
-	path = lem->path;
-	while (path)
-	{
-		list = path->content;
-		while (list)
-		{
-			next_node = list->content;
-			printf("%d %d %s\n", i, j, next_node->name);
-			j++;
-			list = list->next;
-		}
-		path = path->next;
-		i++;
-	}
+	// t_list *path;
+	// t_list *list;
+	// int i = 0;
+	// int j = 0;
+	// size_t ll = 0;
+	// t_r *next_node;
+	// path = lem->path;
+	// while (path)
+	// {
+	// 	list = path->content;
+	// 	printf("path %d\n", i);
+	// 	while (list)
+	// 	{
+	// 		next_node = list->content;
+	// 		ll = list->content_size;
+	// 		printf("name %s ", next_node->name);
+	// 		j++;
+	// 		list = list->next;
+	// 	}
+	// 	printf("all length = %zu\n", ll);
+	// 	j = 0;
+	// 	path = path->next;
+	// 	i++;
+	// }
 
 	// otladka queue
 	// t_r *ptr;
