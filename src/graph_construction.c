@@ -50,20 +50,9 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 		bfs_recursieve(lem->all_rms, lem, ++step);
 }
 
-void block_path(t_list *path, t_lem *lem)
-{
-	t_r *node;
 
-	while (path)
-	{
-		node = path->content;
-		if (node != lem->end)
-			node->lvl = -1;
-		path = path->next;
-	}
-}
 
-void save_all_pathes(t_lem *lem)
+void save_path(t_lem *lem)
 {
 	t_list *list;
 	int next_node;
@@ -78,11 +67,14 @@ void save_all_pathes(t_lem *lem)
 		list = search_path(lem, &next_node);
 		if (next_node > 0)
 		{
+			list->content_size = lem->count;
+		// printf("\n%zu\n", list->content_size);
+
 			// block_path(list, lem);
 			if (!lem->path)
-				lem->path = ft_lstnew_new(list, sizeof(t_list));
+				lem->path = ft_lstnew_new(list, lem->count);
 			else
-				ft_lstadd_end(lem->path, ft_lstnew_new(list, sizeof(t_list)));
+				ft_lstadd_end(lem->path, ft_lstnew_new(list, lem->count));
 			break ;
 		}
 	}

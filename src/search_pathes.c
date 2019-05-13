@@ -102,44 +102,52 @@ t_r *search_smallest_path(t_lem *lem)
 		fl = 0;
 		list = lem->start->links;
 		next_node = list->content;
+		ft_printf("%s\n", next_node->name);
 		lem->queue = lem->queue->next;
 	}
 	return result;
+}
+
+void block_path(t_list *path, t_lem *lem)
+{
+	t_r *node;
+
+	while (path)
+	{
+		node = path->content;
+		if (node != lem->end)
+			node->lvl = 0;
+		path = path->next;
+	}
 }
 
 t_list *search_path(t_lem *lem, int *next_node)
 {
 	t_list *list;
 	t_r *result = NULL;
-	// t_r *ptr = NULL;
-	int i;
-	i = 1;
 	
 	block_not_valid_pathes(lem);
 	result = search_smallest_path(lem);
+	ft_printf("%s\n", result->name);
 	if (!result || result->lvl == -1)
 	{
 		*next_node = -1;
         return (NULL);
 	}
-	// printf("fkfkfk\n");
-
+	lem->count = 1;
 	result->lvl = -1;
-	list = ft_lstnew_new(result, i);//sizeof(t_r));
-	// printf("do %s\n", result->name);
+	list = ft_lstnew_new(result, lem->count);//sizeof(t_r));
 	while (result != lem->end)
 	{
-		// ptr = result;
 		result = result->parent;
-	// printf("par %s\n", result->name);
 		if (result->lvl == -1)
 		{
-			// ptr->lvl = -1;
+			block_path(list, lem);
 			*next_node = 0;
 			free(list);
 			return (NULL);
 		}
-		ft_lstadd_end(list, ft_lstnew_new(result, ++i));
+		ft_lstadd_end(list, ft_lstnew_new(result, ++lem->count));
 		if (result != lem->end)
 			result->lvl = -1;
 	}

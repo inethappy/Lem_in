@@ -74,25 +74,7 @@ void save_inp(t_lem *lem, int fd)
 	// }
 }
 
-void push_ants(t_lem *lem)
-{
-	t_list *list;
-	t_list *road;
-
-	list = lem->path;
-	while (list)
-	{
-		road = list->content;
-		while (road)
-		{
-
-		}
-		
-		
-	}
-}
-
-int refresh_parents(t_lem *lem)
+int check_start_links(t_lem *lem)
 {
 	t_r *node;
 	t_list *list;
@@ -109,14 +91,23 @@ int refresh_parents(t_lem *lem)
 	}
 	if (i == 0)
 		return (0);
-	list = lem->all_rms;
+	return (1);
+}
+
+int refresh_parents(t_lem *lem)
+{
+	t_r *node;
+	t_list *list;
+	int i;
+
+	i = 0;
+	list = lem->all_rms;	
 	while (list)
 	{
 		node = list->content;
 		if (node->lvl > 0 && node != lem->end && node != lem->start)
 		{
 			++i;
-			// node->parent = 0;
 			node->alrd = 0;
 			node->lvl = 0;
 		}
@@ -127,13 +118,116 @@ int refresh_parents(t_lem *lem)
 	return (1);
 }
 
-void bfsss(t_lem *lem)
+void find_pathes(t_lem *lem)
 {
+	while (lem->ttl_rms)
+	{
+		bfs(lem);
 	lem->count = 0;
-	bfs(lem);
-	save_all_pathes(lem);
-	if (refresh_parents(lem) > 0)
-		bfsss(lem);
+	save_path(lem);
+	refresh_parents(lem);	// if (check_start_links(lem) == 1 && refresh_parents(lem) == 1)
+	// 	find_pathes(lem);
+	lem->ttl_rms--;
+	}
+}
+
+int move_existing_ants(t_lem *lem, t_list *road)
+{
+	t_r *room;
+	int res = 0;;
+	
+	int ant;
+	t_list *cur;
+	cur = road;
+
+	ant = 1;
+	while (ant <= lem->total)
+	{
+		while (cur)
+		{
+			room = cur->content;
+			if (room->ant == ant && room != lem->end)
+			{
+				ft_printf("L%d-%s, ", room->ant, room->parent->name);
+				room->ant = 0;
+				room->parent->ant = ant;
+				ant++;
+				res++;
+			}
+			cur = cur->next;
+		}
+		cur = road;
+		ant++;
+	}
+	// printf("%d\n", res);
+	return res;
+}
+
+int is_best_path(int ants, t_list *list, t_lem *lem)
+{
+	t_list *path;
+	int res;
+
+	res = 0;
+	// t_list *ptr = list->content;
+	// t_r *ptr2 = ptr->content;
+	// printf("%zu %s\n", list->content_size, ptr2->name);
+	// t_r *ptr = path->content;
+	// printf("%p %s %p %s\n", path, list, ptr->name, ptr2->n);
+	path = lem->path;
+	if (path == list)
+		res = 0;
+	while (path)
+	{
+		if (path == list)
+			break;
+		res += list->content_size - path->content_size;
+		path = path->next;
+	}
+	if (ants > res)
+		return (1);
+	return (0);
+}
+
+void push_ants(t_lem *lem)
+{
+	t_list *list;
+	t_list *ptr;
+	t_r *room;
+	int ants;
+	int res;
+	int flag = 1;
+
+	ants = lem->total;
+	list = lem->path;
+	lem->count = 0;
+	while (ants >= 0)
+	{
+		while (list)
+		{
+			flag += move_existing_ants(lem, list->content);
+			if (ants > 0)
+			{
+				res = is_best_path(ants, list->content, lem);
+				if (res)
+				{
+					ptr = list->content;
+					room = ptr->content;
+					ft_printf("L%d-%s, ", ABS(ants - lem->total - 1), room->name);
+					room->ant = ABS(ants - lem->total - 1);
+					ants--;
+				}
+			}
+			list = list->next;
+		}
+		if (!flag)
+			break ;
+		ft_printf("\n");
+		lem->count++;
+		flag = 0;
+		list = lem->path;
+	}
+	ft_printf("ITOGO %d\n", lem->count);
 }
 
 int main(int argc, char **argv)
@@ -145,8 +239,9 @@ int main(int argc, char **argv)
 	lem = ft_memalloc(sizeof(t_lem));
 	if (argc == 2)
 		save_inp(lem, fd);
-	count_rooms(lem);
-	bfsss(lem);
+	count_start_links(lem); //?????????
+	find_pathes(lem);
+	// push_ants(lem);
 	
 	t_list *list;
 	t_list *path;
@@ -172,7 +267,6 @@ int main(int argc, char **argv)
 		path = path->next;
 		i++;
 	}
-	// push_ants(lem);
 	system("leaks lem-in > leaks");
 	return (0);
 }

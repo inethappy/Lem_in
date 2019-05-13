@@ -14,11 +14,11 @@ int check_digit(char *l)
 	return (1);
 }
 
-void count_rooms(t_lem *lem)
+void count_start_links(t_lem *lem)
 {
 	t_list *all;
 
-	all = lem->all_rms;
+	all = lem->start->links;
 	while (all)
 	{
 		lem->ttl_rms++;
