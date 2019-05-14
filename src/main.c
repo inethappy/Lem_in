@@ -34,14 +34,13 @@ void save_inp(t_lem *lem, int fd)
 	char *l;
 	int fl;
 
-	// int i = 0;
 	l = NULL;
     get_next_line(fd, &l);
     if (!check_digit(l) || ft_atoi(l) == 0)
         p_error("Error! Not valid ants quantity!");
     lem->total = ft_atoi(l);
     free(l);
-	while (get_next_line(fd, &l))// && i < 9)
+	while (get_next_line(fd, &l))
 	{
 		if (l[0] == '#' && l[1] == '#' && (ft_strcmp(l + 2, "start") == 0 || ft_strcmp(l + 2, "end") == 0))
 		{
@@ -55,7 +54,6 @@ void save_inp(t_lem *lem, int fd)
 		else if (ft_strchr(l, ' '))
 			save_rooms(l, lem);
 		free(l);
-		// i++;
 	}
 	free(l);
 
@@ -122,13 +120,25 @@ void find_pathes(t_lem *lem)
 {
 	while (lem->ttl_rms)
 	{
+		refresh_parents(lem);	// if (check_start_links(lem) == 1 && refresh_parents(lem) == 1)
 		bfs(lem);
-	lem->count = 0;
-	save_path(lem);
-	refresh_parents(lem);	// if (check_start_links(lem) == 1 && refresh_parents(lem) == 1)
-	// 	find_pathes(lem);
-	lem->ttl_rms--;
+		lem->count = 0;
+		save_path(lem);
+		lem->ttl_rms--;
 	}
+	
+	// t_list *list;
+	// t_r *ptr;
+	// list = lem->start->links;
+	// while (list)
+	// {
+	// 	ptr = list->content;
+	// 	printf("queue %s, lvl = %d, ", ptr->name, ptr->lvl);
+	// 	if (ptr->parent)
+	// 		 printf("prnt = %s", ptr->parent->name);
+	// 	printf("\n");
+	// 	list = list->next;
+	// }
 }
 
 int move_existing_ants(t_lem *lem, t_list *road)
@@ -146,6 +156,7 @@ int move_existing_ants(t_lem *lem, t_list *road)
 		while (cur)
 		{
 			room = cur->content;
+			// printf("ant ==== %d room ===  %s room_ant === %d\n", ant, room->name, room->ant);
 			if (room->ant == ant && room != lem->end)
 			{
 				ft_printf("L%d-%s, ", room->ant, room->parent->name);
@@ -169,14 +180,7 @@ int is_best_path(int ants, t_list *list, t_lem *lem)
 	int res;
 
 	res = 0;
-	// t_list *ptr = list->content;
-	// t_r *ptr2 = ptr->content;
-	// printf("%zu %s\n", list->content_size, ptr2->name);
-	// t_r *ptr = path->content;
-	// printf("%p %s %p %s\n", path, list, ptr->name, ptr2->n);
 	path = lem->path;
-	if (path == list)
-		res = 0;
 	while (path)
 	{
 		if (path == list)
@@ -184,6 +188,7 @@ int is_best_path(int ants, t_list *list, t_lem *lem)
 		res += list->content_size - path->content_size;
 		path = path->next;
 	}
+	// printf("ants======== %d res ====== %d\n", ants, res);
 	if (ants > res)
 		return (1);
 	return (0);
@@ -195,7 +200,7 @@ void push_ants(t_lem *lem)
 	t_list *ptr;
 	t_r *room;
 	int ants;
-	int res;
+	// int res;
 	int flag = 1;
 
 	ants = lem->total;
@@ -208,13 +213,13 @@ void push_ants(t_lem *lem)
 			flag += move_existing_ants(lem, list->content);
 			if (ants > 0)
 			{
-				res = is_best_path(ants, list->content, lem);
-				if (res)
+				// res = is_best_path(ants, list->content, lem);
+				if (is_best_path(ants, list, lem))
 				{
 					ptr = list->content;
 					room = ptr->content;
 					ft_printf("L%d-%s, ", ABS(ants - lem->total - 1), room->name);
-					room->ant = ABS(ants - lem->total - 1);
+					room->ant = ants;
 					ants--;
 				}
 			}
@@ -230,43 +235,43 @@ void push_ants(t_lem *lem)
 	ft_printf("ITOGO %d\n", lem->count);
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
 	t_lem *lem;
 	int fd;
 
-	fd = open(argv[1], O_RDONLY);
+	fd = 0;//open(argv[1], O_RDONLY);
 	lem = ft_memalloc(sizeof(t_lem));
-	if (argc == 2)
+	// if (argc == 2)
 		save_inp(lem, fd);
 	count_start_links(lem); //?????????
 	find_pathes(lem);
-	// push_ants(lem);
+	push_ants(lem);
 	
-	t_list *list;
-	t_list *path;
-	int i = 0;
-	int j = 0;
-	size_t ll = 0;
-	t_r *next_node;
-	path = lem->path;
-	while (path)
-	{
-		list = path->content;
-		printf("path %d\n", i);
-		while (list)
-		{
-			next_node = list->content;
-			ll = list->content_size;
-			printf("[%s] ", next_node->name);
-			j++;
-			list = list->next;
-		}
-		printf("all length = %zu\n", ll);
-		j = 0;
-		path = path->next;
-		i++;
-	}
+	// t_list *list;
+	// t_list *path;
+	// int i = 0;
+	// int j = 0;
+	// size_t ll = 0;
+	// t_r *next_node;
+	// path = lem->path;
+	// while (path)
+	// {
+	// 	list = path->content;
+	// 	printf("path %d\n", i);
+	// 	while (list)
+	// 	{
+	// 		next_node = list->content;
+	// 		ll = list->content_size;
+	// 		printf("[%s] ", next_node->name);
+	// 		j++;
+	// 		list = list->next;
+	// 	}
+	// 	printf("all length = %zu\n", ll);
+	// 	j = 0;
+	// 	path = path->next;
+	// 	i++;
+	// }
 	system("leaks lem-in > leaks");
 	return (0);
 }
