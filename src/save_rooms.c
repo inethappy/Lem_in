@@ -1,23 +1,26 @@
 #include "lem_in.h"
 
+char *skip_comment(char *l, int fd)
+{
+	while (l && l[0] == '#')
+	{
+		free(l);
+		get_next_line(fd, &l);
+	}
+	ft_printf("%s\n", l);
+	return (l);
+}
+
 void save_end_room(char *l, t_lem *lem, int fd)
 {
 	char **rm;
-	(void)fd;
 
 	rm = NULL;	
 	if (lem->end)
 		p_error("Only one end room please!");
 	ft_printf("%s\n", l);
 	if (l[0] == '#')
-	{
-		while (l && l[0] == '#')
-		{
-			free(l);
-			get_next_line(fd, &l);
-		}
-		ft_printf("%s\n", l);
-	}
+		l = skip_comment(l, fd);	
 	if (l[0] == '\0' || l[0] == 'L' || !(rm = ft_strsplit(l, ' ')) || !rm[1] || !rm[2])
 		p_error("No end room!");
 	lem->end = ft_memalloc(sizeof(t_r));
@@ -44,14 +47,7 @@ void save_start_room(char *l, t_lem *lem, int fd)
 		p_error("Only one start room please!");
 	ft_printf("%s\n", l);
 	if (l[0] == '#')
-	{
-		while (l && l[0] == '#')
-		{
-			free(l);
-			get_next_line(fd, &l);
-		}
-		ft_printf("%s\n", l);
-	}
+		l = skip_comment(l, fd);	
 	rm = ft_strsplit(l, ' ');
 	if (l[0] == '\0' || l[0] == 'L' || !rm || !rm[1] || !rm[2])
 		p_error("No start room!");

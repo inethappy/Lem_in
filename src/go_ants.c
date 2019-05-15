@@ -27,31 +27,28 @@ int refresh_parents(t_lem *lem)
 int move_existing_ants(t_lem *lem, t_list *road)
 {
 	t_r *room;
-	int res = 0;
-    int fl = 0;
-	
-	int ant;
+	int res;
+    int fl;
+	int ant;	
 	t_list *cur;
-	cur = road;
+
 	ant = 1;
+	res = 0;
 	while (ant <= lem->total)
 	{
-		while (cur)
+        fl = 0;
+		cur = road;
+		while (cur && (room = cur->content))
 		{
-			room = cur->content;
 			if (room->ant == ant && room != lem->end && ++fl && ++res)
 			{
 				ft_printf("L%d-%s ", room->ant, room->parent->name);
 				room->ant = 0;
-				room->parent->ant = ant;
-				ant++;
+				room->parent->ant = ant++;
 			}
 			cur = cur->next;
 		}
-		cur = road;
-		if (fl == 0)
-            ant++;
-        fl = 0;
+		ant = (fl == 0) ? ++ant : ant;
 	}
 	return (res);
 }

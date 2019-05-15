@@ -1,20 +1,5 @@
 #include "lem_in.h"
 
-void	block_not_valid_pathes(t_lem *lem)
-{
-	t_list *list;
-	t_r	*next_node;
-
-	list = lem->start->links;
-	while (list)
-	{
-		next_node = list->content;
-		if (next_node->lvl == 0)
-			next_node->lvl = -1;
-		list = list->next;
-	}
-}
-
 void	next_node_levels( t_r *ptr2, t_r *next_node2, t_r **ptr, int *fl)
 {
 	t_r *pointer;
@@ -87,47 +72,29 @@ t_r *search_smallest_path(t_lem *lem)
 	return result;
 }
 
-void block_path(t_list *path, t_lem *lem)
-{
-	t_r *node;
-
-	while (path)
-	{
-		node = path->content;
-		if (node != lem->end)
-			node->lvl = 0;
-		path = path->next;
-	}
-}
-
 t_list *search_path(t_lem *lem, int *next_node)
 {
 	t_list *list;
-	t_r *result = NULL;
+	t_r *result;
 	
-	block_not_valid_pathes(lem);
 	result = search_smallest_path(lem);
 	if (!result || result->lvl == -1)
 	{
 		*next_node = -1;
         return (NULL);
 	}
-	lem->count = 1;
 	result->lvl = -1;
 	list = ft_lstnew_new(result, lem->count);
 	while (result != lem->end)
 	{
 		result = result->parent;
-		if (result->lvl == -1)
+		if (result->lvl == -1 && (*next_node = 0))
 		{
-			block_path(list, lem);
-			*next_node = 0;
 			free(list);
 			return (NULL);
 		}
 		ft_lstadd_end(list, ft_lstnew_new(result, ++lem->count));
-		if (result != lem->end)
-			result->lvl = -1;
+		result->lvl = (result != lem->end) ? -1 : result->lvl;
 	}
 	*next_node = 1;
 	return (list);

@@ -51,7 +51,7 @@ void save_inp(t_lem *lem, int fd)
 			save_rooms(l, lem);
 		else if (ft_strchr(l, '-'))
 		{
-			if (!save_links(l, lem, fd))
+			if (! handle_links(l, lem, fd))
 				break ;
 		}
 	}
