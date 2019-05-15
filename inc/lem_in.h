@@ -37,23 +37,28 @@ struct	s_lem
 	int count;
 };
 
-void save_end_room(char *l, t_lem *lem);
-void save_start_room(char *l, t_lem *lem);
+void save_ants_number(int fd, t_lem *lem);
+void save_end_room(char *l, t_lem *lem, int fd);
+void save_start_room(char *l, t_lem *lem, int fd);
 void save_rooms(char *l, t_lem *lem);
-void save_links(char *l, t_lem *lem);
+int save_links(char *l, t_lem *lem, int fd);
 void save_inp(t_lem *lem, int fd);
-int	validation_data(t_lem *lem, char **rm);
+int	validation_data(t_list *ptr, char **rm);
 t_list	*ft_lstnew_new(void *content, size_t content_size);
 void     link_if_list(t_r *r1, t_r *r2);
-// void count_rooms(t_lem *lem);
 int check_digit(char *l);
 void bfs(t_lem *lem);
 void bfs_recursieve(t_list *all, t_lem *lem, int step);
 int check_existing_node(t_r *node, t_list *queue);
-// void save_all_pathes(t_lem *lem);
 void save_path(t_lem *lem);
 t_list *search_path(t_lem *lem, int *next_node);
 void count_start_links(t_lem *lem);
+int refresh_parents(t_lem *lem);
+int move_existing_ants(t_lem *lem, t_list *road);
+int is_best_path(int ants, t_list *list, t_lem *lem);
+void push_ants(t_lem *lem);
+void	push_from_start(int *ants, t_list *list, t_lem *lem);
+
 
 
 #endif

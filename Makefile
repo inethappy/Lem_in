@@ -11,7 +11,8 @@ SOURCES		:=	main.c \
 				save_links.c \
 				service_functions.c \
 				graph_construction.c \
-				search_pathes.c
+				search_pathes.c \
+				go_ants.c
 
 OBJECTS		:= $(addprefix $(OBJECTS_DIR), $(SOURCES:.c=.o))
 

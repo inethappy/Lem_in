@@ -24,43 +24,31 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 	int i;
 
 	i = lem->count;
-
 	while (all)
 	{
 		node = all->content;
 		if (node->lvl == (step - 1) && node != lem->start && node->lvl != -1)
 		{
 			l = node->links;
-			while (l)
+			while (l && (node2 = l->content))
 			{
-				node2 = l->content;
-				// node2->lvl = (node2->lvl == 0) ? step : node2->lvl;
-				if (node2->alrd == 0 && node2->lvl != -1 && (node2->parent = node) && ++lem->count)
-				{
-					node2->lvl = step;
+				if (node2->alrd == 0 && node2->lvl != -1 && (node2->parent = node) 
+					&& ++lem->count && (node2->lvl = step))
 					node2->alrd = 1;
-				}
 				l = l->next;
 			}
 		}
-		// printf("step %d, %s %d, %d\n", step, node2->name, node2->lvl, lem->count);
 		all = all->next;
 	}
-	if (i < lem->count) // lem->count < lem->ttl_rms && 
+	if (i < lem->count)	
 		bfs_recursieve(lem->all_rms, lem, ++step);
 }
-
-
 
 void save_path(t_lem *lem)
 {
 	t_list *list;
 	int next_node;
 
-	// next_node = search_path(lem, &list);
-	// if (list == NULL || next_node == -1)
-	// 	p_error("No any valid path!");
-	// lem->path = ft_lstnew_new(list, sizeof(t_list));
 	next_node = 0;
 	while (next_node >= 0)
 	{
@@ -68,9 +56,6 @@ void save_path(t_lem *lem)
 		if (next_node > 0)
 		{
 			list->content_size = lem->count;
-		// printf("\n%zu\n", list->content_size);
-
-			// block_path(list, lem);
 			if (!lem->path)
 				lem->path = ft_lstnew_new(list, lem->count);
 			else
@@ -102,6 +87,7 @@ void bfs(t_lem *lem)
 		l = l->next;
 	}
 	bfs_recursieve(lem->all_rms, lem, ++step);
+}
     // save_all_pathes(lem);
 	
 	// otladka starts
@@ -153,4 +139,3 @@ void bfs(t_lem *lem)
 	// 	printf("\n");
 	// 	list = list->next;
 	// }
-}

@@ -19,7 +19,7 @@ void     link_if_list(t_r *r1, t_r *r2)
     }
 }
 
-void search_linked_rooms(char **rm, t_r **r1, t_r **r2, t_lem *lem)
+int search_linked_rooms(char **rm, t_r **r1, t_r **r2, t_lem *lem)
 {
 	t_list *list;
 	t_r *ptr;
@@ -35,11 +35,11 @@ void search_linked_rooms(char **rm, t_r **r1, t_r **r2, t_lem *lem)
 		list = list->next;
 	}
 	if (*r1 == NULL || *r2 == NULL || rm[2])
-		p_error("Wrong room name in links!");
-	// lem->ttl_rms += 1;
+		return 0;
+	return (1);
 }
 
-void save_links(char *l, t_lem *lem)
+int save_links(char *l, t_lem *lem, int fd)
 {
 	char **rm;
 	t_r *r1;
@@ -47,10 +47,12 @@ void save_links(char *l, t_lem *lem)
 
 	r1 = NULL;
 	r2 = NULL;
+	
 	rm = ft_strsplit(l, '-');
 	if (rm[0][0] == '#')
-		return ;
-	search_linked_rooms(rm, &r1, &r2, lem);
+		return (1);
+	if (!search_linked_rooms(rm, &r1, &r2, lem))
+		return (0);
     link_if_list(r1, r2);
     link_if_list(r2, r1);
     if (!r1->links)
@@ -58,4 +60,30 @@ void save_links(char *l, t_lem *lem)
     if (!r2->links)
 		r2->links = ft_lstnew_new(r1, sizeof(t_r));
 	del_arr(rm);
+	free(l);
+	while (get_next_line(fd, &l))
+	{
+		if (l[0] == '\0')
+			return (0);
+		ft_printf("%s\n", l);
+		r1 = NULL;
+	r2 = NULL;
+	if (l[0] == '#')
+	{
+		free(l);
+		return (1);
+	}
+	rm = ft_strsplit(l, '-');
+	if (!search_linked_rooms(rm, &r1, &r2, lem))
+		return (0);
+    link_if_list(r1, r2);
+    link_if_list(r2, r1);
+    if (!r1->links)
+		r1->links = ft_lstnew_new(r2, sizeof(t_r));
+    if (!r2->links)
+		r2->links = ft_lstnew_new(r1, sizeof(t_r));
+	del_arr(rm);
+			free(l);
+	}
+	return (1);
 }
