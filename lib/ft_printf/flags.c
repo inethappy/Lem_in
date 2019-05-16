@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-# include "libft/libft.h"
-
+#include "libft/libft.h"
 
 void	ft_search_fl(char *fmt, t_flags *fl)
 {

@@ -1,27 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   graph_construction.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkotytsk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/05/16 10:26:31 by mkotytsk          #+#    #+#             */
+/*   Updated: 2019/05/16 10:26:32 by mkotytsk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem_in.h"
 
-int check_existing_node(t_r *node, t_list *queue)
+int		check_existing_node(t_r *node, t_list *queue)
 {
-	t_list *ptr;
-	t_r *ptr_tr;
+	t_list	*ptr;
+	t_r		*ptr_tr;
 
 	ptr = queue;
 	while (ptr)
 	{
 		ptr_tr = ptr->content;
-        if (ft_strcmp(ptr_tr->name, node->name) == 0)
+		if (ft_strcmp(ptr_tr->name, node->name) == 0)
 			return (0);
 		ptr = ptr->next;
 	}
 	return (1);
 }
 
-void bfs_recursieve(t_list *all, t_lem *lem, int step)
+void	bfs_recursieve(t_list *all, t_lem *lem, int step)
 {
-	t_r *node;
-	t_r *node2;
-	t_list *l;
-	int i;
+	t_r		*node;
+	t_r		*node2;
+	t_list	*l;
+	int		i;
 
 	i = lem->count;
 	while (all)
@@ -32,7 +44,8 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 			l = node->links;
 			while (l && (node2 = l->content))
 			{
-				if (node2->alrd == 0 && node2->lvl != -1 && (node2->parent = node) 
+				if (node2->alrd == 0 && node2->lvl != -1
+					&& (node2->parent = node)
 					&& ++lem->count && (node2->lvl = step))
 					node2->alrd = 1;
 				l = l->next;
@@ -40,22 +53,24 @@ void bfs_recursieve(t_list *all, t_lem *lem, int step)
 		}
 		all = all->next;
 	}
-	if (i < lem->count)	
+	if (i < lem->count)
 		bfs_recursieve(lem->all_rms, lem, ++step);
 }
 
-void save_path(t_lem *lem)
+void	save_path(t_lem *lem)
 {
-	t_list *list;
-	int next_node;
+	t_list	*list;
+	int		next_node;
 
 	next_node = 0;
+
 	while (next_node >= 0)
 	{
 		lem->count = 1;
 		list = search_path(lem, &next_node);
 		if (next_node > 0)
 		{
+
 			list->content_size = lem->count;
 			if (!lem->path)
 				lem->path = ft_lstnew_new(list, lem->count);
@@ -64,15 +79,16 @@ void save_path(t_lem *lem)
 			break ;
 		}
 	}
+
 	if (lem->path == NULL)
 		p_error("No any valid path!");
 }
 
-void bfs(t_lem *lem)
+void	bfs(t_lem *lem)
 {
-	t_list *l;
-	t_r *node;
-	int step;
+	t_list	*l;
+	t_r		*node;
+	int		step;
 
 	step = 1;
 	l = lem->end->links;
@@ -89,54 +105,3 @@ void bfs(t_lem *lem)
 	}
 	bfs_recursieve(lem->all_rms, lem, ++step);
 }
-    // save_all_pathes(lem);
-	
-	// otladka starts
-	// t_list *list;
-	// t_r *result;
-	// list = lem->start->links;
-	// while (list)
-	// {
-	// 	result = list->content;
-	// 	printf("start link %s\n", result->name);
-	// 	list = list->next;
-	// }
-
-	// otladka path
-	// t_list *path;
-	// t_list *list;
-	// int i = 0;
-	// int j = 0;
-	// size_t ll = 0;
-	// t_r *next_node;
-	// path = lem->path;
-	// while (path)
-	// {
-	// 	list = path->content;
-	// 	printf("path %d\n", i);
-	// 	while (list)
-	// 	{
-	// 		next_node = list->content;
-	// 		ll = list->content_size;
-	// 		printf("name %s ", next_node->name);
-	// 		j++;
-	// 		list = list->next;
-	// 	}
-	// 	printf("all length = %zu\n", ll);
-	// 	j = 0;
-	// 	path = path->next;
-	// 	i++;
-	// }
-
-	// otladka queue
-	// t_r *ptr;
-	// list = lem->all_rms;
-	// while (list)
-	// {
-	// 	ptr = list->content;
-	// 	printf("queue %s, lvl = %d, ", ptr->name, ptr->lvl);
-	// 	if (ptr->parent)
-	// 		 printf("prnt = %s", ptr->parent->name);
-	// 	printf("\n");
-	// 	list = list->next;
-	// }

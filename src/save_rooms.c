@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   save_rooms.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkotytsk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/05/16 10:26:54 by mkotytsk          #+#    #+#             */
+/*   Updated: 2019/05/16 10:26:56 by mkotytsk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem_in.h"
 
-char *skip_comment(char *l, int fd)
+char	*skip_comment(char *l, int fd, t_lem *lem)
 {
 	while (l && l[0] == '#')
 	{
+		ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 		free(l);
 		get_next_line(fd, &l);
 	}
@@ -11,18 +24,19 @@ char *skip_comment(char *l, int fd)
 	return (l);
 }
 
-void save_end_room(char *l, t_lem *lem, int fd)
+void	save_end_room(char *l, t_lem *lem, int fd)
 {
 	char **rm;
 
-	rm = NULL;	
+	rm = NULL;
 	if (lem->end)
-		p_error("Only one end room please!");
-	ft_printf("%s\n", l);
+		p_error("Error! Only one end room please!");
+	ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 	if (l[0] == '#')
-		l = skip_comment(l, fd);	
-	if (l[0] == '\0' || l[0] == 'L' || !(rm = ft_strsplit(l, ' ')) || !rm[1] || !rm[2])
-		p_error("No end room!");
+		l = skip_comment(l, fd, lem);
+	if (l[0] == '\0' || l[0] == 'L'
+		|| !(rm = ft_strsplit(l, ' ')) || !rm[1] || !rm[2])
+		p_error("Error! No end room!");
 	lem->end = ft_memalloc(sizeof(t_r));
 	if (validation_data(lem->all_rms, rm))
 	{
@@ -38,19 +52,19 @@ void save_end_room(char *l, t_lem *lem, int fd)
 	free(l);
 }
 
-void save_start_room(char *l, t_lem *lem, int fd)
+void	save_start_room(char *l, t_lem *lem, int fd)
 {
 	char **rm;
 
-	rm = NULL;	
+	rm = NULL;
 	if (lem->start)
-		p_error("Only one start room please!");
-	ft_printf("%s\n", l);
+		p_error("Error! Only one start room please!");
+	ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 	if (l[0] == '#')
-		l = skip_comment(l, fd);	
+		l = skip_comment(l, fd, lem);
 	rm = ft_strsplit(l, ' ');
 	if (l[0] == '\0' || l[0] == 'L' || !rm || !rm[1] || !rm[2])
-		p_error("No start room!");
+		p_error("Error! No start room!");
 	lem->start = ft_memalloc(sizeof(t_r));
 	if (validation_data(lem->all_rms, rm))
 	{
@@ -66,13 +80,13 @@ void save_start_room(char *l, t_lem *lem, int fd)
 	free(l);
 }
 
-void save_rooms(char *l, t_lem *lem)
+void	save_rooms(char *l, t_lem *lem)
 {
-	char **rm;
-	t_r *roo;
-	
+	char	**rm;
+	t_r		*roo;
+
 	if (l[0] == 'L' || !(rm = ft_strsplit(l, ' ')) || !rm[1] || !rm[2])
-		p_error("Invalid room!");
+		p_error("Error! Invalid room!");
 	if (l[0] == '#')
 	{
 		free(l);

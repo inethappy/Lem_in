@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-void del_arr(char **arr)
+void	del_arr(char **arr)
 {
 	int i;
 
