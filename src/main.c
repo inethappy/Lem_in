@@ -23,7 +23,7 @@ int		validation_data(t_list *ptr, char **rm)
 	while (++i < 3)
 	{
 		while (rm[i][++j])
-			if (!ft_isdigit(rm[i][j]) && rm[i][j] != '-' && rm[i][j] != '+')
+			if ((!ft_isdigit(rm[i][j]) && rm[i][j] != '+') || j > 9)
 				p_error("Error! Not valid coordinate!");
 		j = -1;
 	}
@@ -48,8 +48,6 @@ void	save_inp(t_lem *lem, int fd)
 
 	while (get_next_line(fd, &l))
 	{
-		if (l[0] == '\0')
-			break ;
 		ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 		if (l[0] == '#' && l[1] == '#' && (ft_strcmp(l + 2, "start") == 0
 			|| ft_strcmp(l + 2, "end") == 0))
@@ -66,8 +64,9 @@ void	save_inp(t_lem *lem, int fd)
 			if (!handle_links(l, lem, fd))
 				break ;
 		}
+		else if (l[0] == '\0' || l[0] != '#')
+			break ;
 	}
-	free(l);
 }
 
 void	find_pathes(t_lem *lem)
@@ -88,7 +87,7 @@ void	finality(t_lem *lem)
 	size_t	ll;
 	t_r		*next_node;
 
-	i = 0;
+	i = 1;
 	path = lem->path;
 	while (path)
 	{
@@ -108,19 +107,6 @@ void	finality(t_lem *lem)
 	ft_printf("\x1B[1;35;10mTOTAL MOVES: %d\x1B[0;0;0m\n", lem->count);
 }
 
-void show_input(t_lem *lem)
-{
-	t_list *list;
-	list = lem->input;
-	char *l;
-	while (list)
-	{
-		l = list->content;
-		ft_printf("%s\n", l);
-		list = list->next;
-	}
-}
-
 int		main(void)
 {
 	t_lem	*lem;
@@ -136,6 +122,5 @@ int		main(void)
 	find_pathes(lem);
 	show_input(lem);
 	push_ants(lem);
-	system("leaks lem-in > leaks");
 	return (0);
 }

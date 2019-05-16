@@ -18,6 +18,7 @@ void	del_arr(char **arr)
 
 	i = -1;
 	while (arr[++i])
-		free(arr[i]);
+		if (arr[i])
+			free(arr[i]);
 	free(arr);
 }

@@ -12,15 +12,31 @@
 
 #include "lem_in.h"
 
+void	show_input(t_lem *lem)
+{
+	char	*l;
+	t_list	*list;
+
+	list = lem->input;
+	while (list)
+	{
+		l = list->content;
+		ft_printf("%s\n", l);
+		list = list->next;
+	}
+}
+
 char	*skip_comment(char *l, int fd, t_lem *lem)
 {
 	while (l && l[0] == '#')
 	{
-		ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
+		if (lem->input)
+			ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
+		else
+			ft_lstnew(l, ft_strlen(l));
 		free(l);
 		get_next_line(fd, &l);
 	}
-	ft_printf("%s\n", l);
 	return (l);
 }
 
@@ -29,7 +45,7 @@ void	save_end_room(char *l, t_lem *lem, int fd)
 	char **rm;
 
 	rm = NULL;
-	if (lem->end)
+	if (lem->end || (l[0] == '#' && l[1] == '#'))
 		p_error("Error! Only one end room please!");
 	ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 	if (l[0] == '#')
@@ -57,7 +73,7 @@ void	save_start_room(char *l, t_lem *lem, int fd)
 	char **rm;
 
 	rm = NULL;
-	if (lem->start)
+	if (lem->start || (l[0] == '#' && l[1] == '#'))
 		p_error("Error! Only one start room please!");
 	ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 	if (l[0] == '#')

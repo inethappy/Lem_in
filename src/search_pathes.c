@@ -113,6 +113,5 @@ t_list	*search_path(t_lem *lem, int *next_node)
 		result->lvl = (result != lem->end) ? -1 : result->lvl;
 	}
 	*next_node = 1;
-
 	return (list);
 }

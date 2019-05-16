@@ -63,14 +63,12 @@ void	save_path(t_lem *lem)
 	int		next_node;
 
 	next_node = 0;
-
 	while (next_node >= 0)
 	{
 		lem->count = 1;
 		list = search_path(lem, &next_node);
 		if (next_node > 0)
 		{
-
 			list->content_size = lem->count;
 			if (!lem->path)
 				lem->path = ft_lstnew_new(list, lem->count);
@@ -79,7 +77,6 @@ void	save_path(t_lem *lem)
 			break ;
 		}
 	}
-
 	if (lem->path == NULL)
 		p_error("No any valid path!");
 }

@@ -66,29 +66,31 @@ int		save_links(char *l, t_lem *lem)
 	}
 	rm = ft_strsplit(l, '-');
 	if (!rm[1] || !search_linked_rooms(rm, &r1, &r2, lem) || l[0] == '-')
+	{
+		clean_buffers(l, rm);
 		return (0);
-	ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
+	}
 	link_if_list(r1, r2);
 	link_if_list(r2, r1);
 	if (!r1->links)
 		r1->links = ft_lstnew_new(r2, sizeof(t_r));
 	if (!r2->links)
 		r2->links = ft_lstnew_new(r1, sizeof(t_r));
-	del_arr(rm);
-	free(l);
+	clean_buffers(l, rm);
 	return (2);
 }
 
 int		handle_links(char *l, t_lem *lem, int fd)
 {
 	int	a;
-	
+
 	if ((a = save_links(l, lem)) < 2)
 		return (a);
 	while (get_next_line(fd, &l))
 	{
 		if (l[0] == '\0')
 			return (0);
+		ft_lstadd_end(lem->input, ft_lstnew(l, ft_strlen(l)));
 		if ((a = save_links(l, lem)) < 2)
 			return (a);
 	}

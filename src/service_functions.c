@@ -12,6 +12,12 @@
 
 #include "lem_in.h"
 
+void	clean_buffers(char *l, char **rm)
+{
+	free(l);
+	del_arr(rm);
+}
+
 int		check_digit(char *l)
 {
 	int i;
@@ -53,8 +59,11 @@ void	save_ants_number(int fd, t_lem *lem)
 {
 	char *l;
 
-	get_next_line(fd, &l);
-	if (!check_digit(l) || ft_atoi(l) < 1 || ft_atoi(l) > 2147480)
+	if (!get_next_line(fd, &l) || l[0] == '\0')
+		p_error("Error! Not valid ants quantity!");
+	if (l[0] == '#')
+		l = skip_comment(l, fd, lem);
+	if (!l || !check_digit(l) || ft_atoi(l) < 1 || ft_atoi(l) > 2147480)
 		p_error("Error! Not valid ants quantity!");
 	lem->total = ft_atoi(l);
 	lem->input = ft_lstnew(l, ft_strlen(l));

@@ -78,5 +78,7 @@ void	next_node_levels(t_r *ptr2, t_r *next_node2, t_r **ptr, int *fl);
 void	find_smallest_level(t_r **next_node, t_list **l, t_r **result, int *fl);
 t_r		*search_smallest_path(t_lem *lem);
 void	finality(t_lem *lem);
+void	show_input(t_lem *lem);
+void	clean_buffers(char *l, char **rm);
 
 #endif
